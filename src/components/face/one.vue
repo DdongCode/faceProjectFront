@@ -83,17 +83,16 @@ export default {
 
 <style scoped>
 .video {
-  position: absolute;
-  top: 23%;
+  /*position: absolute;*/
+  /*top: 23%;*/
   width: 62%;
   height: 44%;
   background: #646cff;
 }
 
 .start {
-  position: absolute;
-  top: 23%;
-  left: 40%;
+  /*top: 23%;*/
+  /*left: 40%;*/
   width: 20%;
   height: 15%;
   background: red;
