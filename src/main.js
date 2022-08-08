@@ -2,6 +2,7 @@ import { createApp } from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from './router'
+import ElementPlus from 'element-plus'
 
 /*
 * to 要跳转到哪里
@@ -25,5 +26,6 @@ router.beforeEach((to, from, next) => {
 
 createApp(App)
     .use(router)
+    .use(ElementPlus)
     .mount('#app')
 
