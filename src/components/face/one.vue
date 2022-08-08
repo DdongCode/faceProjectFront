@@ -1,6 +1,5 @@
 <template>
   <div class="bgImage">
-      <img :src="bg" class="bg">
       <video v-show="toggle" class="video" ref="video" autoplay></video>
       <canvas v-show="!toggle" class="video" ref="canvas"></canvas>
       <div class="start" @click="snap"></div>
@@ -51,7 +50,7 @@ export default {
       let blob = this.dataURItoBlob(img);
       let formData = new FormData();
       formData.append("file", blob)
-      axios.post("https://www.jamscoco.top/image/faceSearch", formData, {
+      axios.post("/api/image/faceSearch", formData, {
         headers: {
           'Content-type': 'multipart/form-data'
         }
@@ -98,12 +97,6 @@ export default {
   width: 20%;
   height: 15%;
   background: red;
-}
-
-.bg{
-  position: absolute;
-  width: 1080px;
-  height: 1920px;
 }
 
 
