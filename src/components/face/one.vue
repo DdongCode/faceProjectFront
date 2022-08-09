@@ -1,8 +1,10 @@
 <template>
   <div class="bgImage">
-      <video v-show="toggle" class="video" ref="video" autoplay></video>
+    <div class="parent">
+      <video v-show="toggle" class="video" id="video" ref="video" autoplay></video>
       <canvas v-show="!toggle" class="video" ref="canvas"></canvas>
       <div class="start" @click="snap"></div>
+    </div>
   </div>
 </template>
 
@@ -20,6 +22,7 @@ export default {
     }
   },
   mounted() {
+    sessionStorage.removeItem("name")
     let _this = this
     setTimeout(() => {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
@@ -44,8 +47,13 @@ export default {
 
       canvas.width = video.videoWidth * scale
       canvas.width = video.videoWidth * scale
+
+      context.translate(canvas.width, 0);//画布 X轴 向右移 canvas.width
+      context.scale(-1, 1);//以 X轴 左右翻转
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
+      context.setTransform(1, 0, 0, 1, 0, 0);  //恢复画布到初始状态
       this.toggle = !this.toggle
+
       let img = canvas.toDataURL("image/jpeg", 0.9)
       let blob = this.dataURItoBlob(img);
       let formData = new FormData();
@@ -58,7 +66,7 @@ export default {
         let {result} = res.data
         let name = result[0].extraData
         sessionStorage.setItem("name",name)
-        this.$router.replace('/two')
+        this.$router.push('/two')
       }).catch(e=>{
         this.toggle = !this.toggle
         alert("未识别到人脸，请重新拍摄");
@@ -82,17 +90,30 @@ export default {
 </script>
 
 <style scoped>
+
+.parent {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .video {
-  /*position: absolute;*/
-  /*top: 23%;*/
-  width: 62%;
+  position: absolute;
+  top: 30%;
+  left: 18%;
+  width: 64%;
   height: 44%;
   background: #646cff;
 }
 
+#video{
+  transform: rotateY(180deg);
+}
+
 .start {
-  /*top: 23%;*/
-  /*left: 40%;*/
+  position: absolute;
+  bottom: 10%;
+  left: 40%;
   width: 20%;
   height: 15%;
   background: red;

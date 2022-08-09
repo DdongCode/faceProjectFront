@@ -4,7 +4,7 @@
       <img class="titleImage" :src="title" alt="not found">
       <img class="person1" :src="person1" alt="not found">
       <img class="person2" :src="person2" alt="not found">
-      <img class="restart" :src="restart" alt="not found">
+      <img class="restart" @click="doAgain" :src="restart" alt="not found">
 
       <p class="titleText">{{titleText}}</p>
 
@@ -58,6 +58,11 @@ export default {
     }
     this.person1 = guanyu1
     this.person2 = guanyu2
+  },
+  methods:{
+    doAgain(){
+      this.$router.replace('/one')
+    }
   }
 }
 </script>
