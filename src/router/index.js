@@ -4,6 +4,7 @@ import one from "../components/face/one.vue";
 import two from "../components/face/two.vue";
 import face from "../components/Face.vue";
 import error from "../components/error.vue";
+import Home from "../components/Home.vue";
 
 //路由数组
 const routes = [
@@ -29,6 +30,11 @@ const routes = [
         path: "/404",
         name: "error",
         component: error,
+    },
+    {
+        path: "/face_manager_page",
+        name: "Manager",
+        component: Home,
     }
 ]
 
