@@ -11,6 +11,7 @@
 <script>
 
 import axios from 'axios'
+import { ElLoading } from 'element-plus'
 import bg from '../../assets/img/other/bg4.jpg'
 
 export default {
@@ -53,7 +54,11 @@ export default {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       context.setTransform(1, 0, 0, 1, 0, 0);  //恢复画布到初始状态
       this.toggle = !this.toggle
-
+      // ElLoading.service({
+      //   lock: true,
+      //   text: 'Loading',
+      //   background: 'rgba(0, 0, 0, 0.7)',
+      // })
       let img = canvas.toDataURL("image/jpeg", 0.9)
       let blob = this.dataURItoBlob(img);
       let formData = new FormData();
