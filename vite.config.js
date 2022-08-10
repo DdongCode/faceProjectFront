@@ -9,7 +9,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/api': {
-        target: 'https://www.jamscoco.top',	//实际请求地址
+        target: 'http://localhost:8080',	//实际请求地址
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       },

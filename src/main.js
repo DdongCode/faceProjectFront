@@ -1,10 +1,10 @@
-import { createApp } from 'vue'
+import {createApp} from 'vue'
 import './style.css'
 import App from './App.vue'
 import router from './router'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
-
+import * as ElIconList from '@element-plus/icons-vue'
 /*
 * to 要跳转到哪里
 * from 从哪里跳转来
@@ -13,20 +13,27 @@ import 'element-plus/dist/index.css'
 router.beforeEach((to, from, next) => {
     //进行判断，如果to路径没有匹配到现有的任何一个路由
     //作用：当to的路由为空时不跳转，同时当from的路由也为空时，则跳转到 404 页面
-    if (to.matched.length === 0){
+    if (to.matched.length === 0) {
         next("/404");
-    }else {
-        if (to.path === '/'){
+    } else {
+        if (to.path === '/') {
             next("/one");
-        }else {
+        } else {
             next();
         }
     }
 
 })
 
-createApp(App)
-    .use(router)
-    .use(ElementPlus)
-    .mount('#app')
+
+const app = createApp(App)
+app.use(router)
+
+for (const name in ElIconList) {
+    app.component(name, ElIconList[name])
+}
+
+app.use(ElementPlus)
+app.mount('#app')
+
 
