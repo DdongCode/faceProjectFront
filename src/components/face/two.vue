@@ -2,6 +2,7 @@
   <div class="bgImage2">
     <div class="parent">
       <img class="titleImage" :src="title" alt="not found">
+      <img class="nameImage" :src="nameImage" alt="not found">
       <img class="person1" :src="person1" alt="not found">
       <img class="person2" :src="person2" alt="not found">
       <img class="restart" @click="doAgain" :src="restart" alt="not found">
@@ -35,6 +36,7 @@ import restart from '../../assets/img/other/restart.png'
 
 import guanyu1 from '../../assets/img/person/guanyu1.png'
 import guanyu2 from '../../assets/img/person/guanyu2.png'
+import guanyu3 from '../../assets/img/person/guanyu3.png'
 
 export default {
   name: "two",
@@ -43,6 +45,7 @@ export default {
       title,
       person1: '',
       person2: '',
+      nameImage:'',
       restart,
       price: 69,
       name: '关羽',
@@ -58,6 +61,7 @@ export default {
     }
     this.person1 = guanyu1
     this.person2 = guanyu2
+    this.nameImage = guanyu3
   },
   methods:{
     doAgain(){
@@ -82,17 +86,24 @@ export default {
 
 }
 
+.nameImage{
+  position: absolute;
+  top: 10%;
+  left: 14%;
+  width: 30%;
+}
+
 .person1 {
   width: 50%;
   position: absolute;
   left: 5%;
-  top: 21%;
+  top: 23%;
 }
 
 .person2 {
   width: 30%;
   right: 9%;
-  bottom: 21%;
+  bottom: 24%;
   position: absolute;
 
 }
@@ -111,82 +122,76 @@ export default {
   bottom: 8%;
   position: absolute;
   text-align: left;
-  /*background: #213547;*/
-}
-
-.priceBox {
-  width: 50%;
-  height: 20%;
-  left: 5%;
-  bottom: 5%;
-  position: absolute;
-
+  color: white;
   /*background: #213547;*/
 }
 
 .introHead {
   margin-left: 20px;
-  color: white;
-  font-size: small;
+  font-size: xx-large;
   margin-bottom: 25px;
 }
 
 .introText {
-  color: white;
-  transform: scale(0.7, 0.7);
   text-indent: 2rem;
-  font-size: 1px;
-  margin: -24px;
   font-weight: lighter;
-  line-height: 1rem;
+}
+
+.priceBox {
+  display: flex;
+  flex-direction: column;
+  width: 50%;
+  height: 15%;
+  left: 5%;
+  bottom: 10%;
+  position: absolute;
+  color: #db0001;
+  /*background: #213547;*/
 }
 
 .priceTop {
   text-align: center;
-  font-size: small;
-  color: #db0001;
+  font-size: xx-large;
   font-weight: bolder;
   letter-spacing: 2px;
 }
 
 .price {
   text-align: center;
-  font-size: xx-large;
+  font-size: xxx-large;
   margin: 15px;
-  color: #db0001;
   font-style: italic;
   font-weight: bolder;
 }
 
 .priceTip {
   text-align: center;
-  color: #db0001;
   font-weight: bolder;
-  font-size: xx-small;
-  line-height: 1rem;
+  font-size: medium;
+  line-height: 2rem;
 }
 
 .infoBox{
   width: 20%;
-  height: 10%;
+  height: 11.5%;
   right: 21%;
-  bottom: 7%;
+  bottom: 8%;
   position: absolute;
   /*background: #213547;*/
 }
 
 .infoBox>p{
   color: #db0001;
-  font-size: x-small;
-  font-weight: bold;
-  line-height: 1.1em;
+  font-size: x-large;
+  font-weight: bolder;
+  line-height: 1em;
 }
 
 .titleText{
   position: absolute;
   color: white;
-  font-size: xx-small;
-  top: 18%;
+  font-size: xx-large;
+  top: 20%;
   left: 11%;
 }
 </style>

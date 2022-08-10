@@ -54,11 +54,11 @@ export default {
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
       context.setTransform(1, 0, 0, 1, 0, 0);  //恢复画布到初始状态
       this.toggle = !this.toggle
-      // ElLoading.service({
-      //   lock: true,
-      //   text: 'Loading',
-      //   background: 'rgba(0, 0, 0, 0.7)',
-      // })
+      const loading = ElLoading.service({
+        lock: true,
+        text: '识别中',
+        background: 'rgba(0, 0, 0, 0.7)',
+      })
       let img = canvas.toDataURL("image/jpeg", 0.9)
       let blob = this.dataURItoBlob(img);
       let formData = new FormData();
@@ -71,10 +71,12 @@ export default {
         let {result} = res.data
         let name = result[0].extraData
         sessionStorage.setItem("name",name)
+        loading.close()
         this.$router.push('/two')
       }).catch(e=>{
         this.toggle = !this.toggle
         alert("未识别到人脸，请重新拍摄");
+        loading.close()
       })
     },
     dataURItoBlob(base64Data) {
@@ -108,7 +110,7 @@ export default {
   left: 18%;
   width: 64%;
   height: 44%;
-  background: #646cff;
+  /*background: #646cff;*/
 }
 
 #video{
@@ -117,7 +119,7 @@ export default {
 
 .start {
   position: absolute;
-  bottom: 10%;
+  bottom: 12%;
   left: 40%;
   width: 20%;
   height: 15%;
