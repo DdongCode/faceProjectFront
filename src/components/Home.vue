@@ -50,10 +50,10 @@
 
       <el-pagination style="margin-top: 10px" background layout="prev, pager, next"
                      :total="pagination.total"
-                      v-model:current-page="pagination.curPage"
-                      />
+                     v-model:current-page="pagination.curPage"
+      />
 
-      <el-dialog @opened="handleOpened"  v-model="dialogFormVisible" :title="dialogTitle" @close="handleDialogCancel">
+      <el-dialog @opened="handleOpened" v-model="dialogFormVisible" :title="dialogTitle" @close="handleDialogCancel">
         <el-form :disabled="!isShowConfirm" :model="person" :rules="rules" ref="person">
           <el-form-item prop="name" label="人物姓名:" :label-width="formLabelWidth">
             <el-input :disabled="editInputName" v-model="person.name" placeholder="请输入人物姓名..."/>
@@ -73,9 +73,10 @@
           <el-form-item prop="nameImage" label="人物艺术字:" :label-width="formLabelWidth">
             <el-upload
                 class="avatar-uploader"
-                action="xxx"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess('nameImage')">
+                action="#"
+                :auto-upload="false"
+                :on-change="uploadNameImage"
+                :show-file-list="false">
               <img v-if="person.nameImage" :src="person.nameImage" class="avatar"/>
               <el-icon v-else class="avatar-uploader-icon">
                 <Plus/>
@@ -85,9 +86,9 @@
           <el-form-item prop="personImage" label="人物卡通图:" :label-width="formLabelWidth">
             <el-upload
                 class="avatar-uploader"
-                action="xxx"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess('personImage')">
+                action="#"
+                :on-change="uploadPersonImage"
+                :show-file-list="false">
               <img v-if="person.personImage" :src="person.personImage" class="avatar"/>
               <el-icon v-else class="avatar-uploader-icon">
                 <Plus/>
@@ -97,9 +98,9 @@
           <el-form-item prop="dollImage" label="人物玩偶图片:" :label-width="formLabelWidth">
             <el-upload
                 class="avatar-uploader"
-                action="xxx"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess('dollImage')">
+                action="#"
+                :on-change="uploadDollImage"
+                :show-file-list="false">
               <img v-if="person.dollImage" :src="person.dollImage" class="avatar"/>
               <el-icon v-else class="avatar-uploader-icon">
                 <Plus/>
@@ -109,9 +110,9 @@
           <el-form-item prop="qrCode" label="二维码:" :label-width="formLabelWidth">
             <el-upload
                 class="avatar-uploader"
-                action="xxx"
-                :show-file-list="false"
-                :on-success="handleAvatarSuccess('qrCode')">
+                action="#"
+                :on-change="uploadQrCodeImage"
+                :show-file-list="false">
               <img v-if="person.qrCode" :src="person.qrCode" class="avatar"/>
               <el-icon v-else class="avatar-uploader-icon">
                 <Plus/>
@@ -134,15 +135,15 @@
 <script>
 
 import axios from "axios";
-import { ElMessage, ElMessageBox } from 'element-plus'
+import {ElMessage, ElMessageBox} from 'element-plus'
 
 
 export default {
   name: "Home",
   data() {
     return {
-      editInputName:false,
-      isShowConfirm:true,
+      editInputName: false,
+      isShowConfirm: true,
       selectedRows: [],
       dialogTitle: '',
       searchName: '',
@@ -161,7 +162,12 @@ export default {
       formLabelWidth: '140px',
       tableData: [],
       rules: {
-        name: [{required: true, message: '人物姓名不能为空', trigger: 'blur'},{required: true,validator: this.checkName,message: '该人物已存在，不可添加',trigger: 'blur'}],
+        name: [{required: true, message: '人物姓名不能为空', trigger: 'blur'}, {
+          required: true,
+          validator: this.checkName,
+          message: '该人物已存在，不可添加',
+          trigger: 'blur'
+        }],
         nameImage: [{required: true, message: '人物艺术字图片未上传', trigger: 'blur'}],
         personImage: [{required: true, message: '人物卡通图片未上传', trigger: 'blur'}],
         personInfoOne: [{required: true, message: '第一段人物简介不能为空', trigger: 'blur'}],
@@ -171,32 +177,67 @@ export default {
         price: [{required: true, message: '价格不能为空', trigger: 'blur'}],
         qrCode: [{required: true, message: '商品二维码图片未上传', trigger: 'blur'}]
       },
-      pagination:{
-        total:110,
-        curPage:1
+      pagination: {
+        total: 110,
+        curPage: 1
       }
     }
   },
-  watch:{
-    'pagination.curPage'(newValue){
-        this.initData(newValue)
+  watch: {
+    'pagination.curPage'(newValue) {
+      this.initData(newValue)
     }
   },
   methods: {
-    checkName(rule, value, callback){
-      axios.get('/api/person/checkname/',{
-        params:{
-          name:this.person.name
+    uploadNameImage(uploadFile) {
+      this.doUpload(uploadFile, 'nameImage')
+    },
+    uploadPersonImage(uploadFile) {
+      this.doUpload(uploadFile, 'personImage')
+    },
+    uploadDollImage(uploadFile) {
+      this.doUpload(uploadFile, 'dollImage')
+    },
+    uploadQrCodeImage(uploadFile) {
+      this.doUpload(uploadFile, 'qrCode')
+    },
+    doUpload(file, target) {
+      let forms = new FormData()
+      let configs = {
+        headers: {'Content-Type': 'multipart/form-data'}
+      }
+      forms.append('file', file.raw)
+      axios.post('/api/person/uploadImage', forms, configs).then(resp => {
+        let url = resp.data.obj
+        if (target === 'nameImage') {
+          this.person.nameImage = resp.data.obj
         }
-      }).then(resp=>{
-        if( resp.data.code === 200){
+        if (target === 'personImage') {
+          this.person.personImage = resp.data.obj
+        }
+        if (target === 'dollImage') {
+          this.person.dollImage = resp.data.obj
+        }
+        if (target === 'qrCode') {
+          this.person.qrCode = resp.data.obj
+        }
+      })
+
+    },
+    checkName(rule, value, callback) {
+      axios.get('/api/person/checkname/', {
+        params: {
+          name: this.person.name
+        }
+      }).then(resp => {
+        if (resp.data.code === 200) {
           callback()
-        }else {
+        } else {
           callback(new Error());
         }
       })
     },
-    searchPersonByName(){
+    searchPersonByName() {
       this.initData(1)
     },
     showAdd() {
@@ -205,18 +246,15 @@ export default {
       this.dialogTitle = '添加人物'
       this.dialogFormVisible = true
     },
-    handleAvatarSuccess(type) {
-
-    },
     handleSelectionChange(e) {
       this.selectedRows = []
-      e.forEach(item=>{
+      e.forEach(item => {
         this.selectedRows.push(item.id)
       })
     },
     batchDelete() {
       ElMessageBox.confirm(
-          '此操作将永久删除['+this.selectedRows.length+']个人物，是否继续?',
+          '此操作将永久删除[' + this.selectedRows.length + ']个人物，是否继续?',
           '提示',
           {
             confirmButtonText: '确定',
@@ -225,11 +263,11 @@ export default {
           })
           .then(() => {
             let url = '/api/person/delete/?'
-            this.selectedRows.forEach(item=>{
-              url += 'ids='+ item + '&'
+            this.selectedRows.forEach(item => {
+              url += 'ids=' + item + '&'
             })
-            url = url.slice(0,url.length-1)
-            axios.delete(url).then(resp=>{
+            url = url.slice(0, url.length - 1)
+            axios.delete(url).then(resp => {
               this.initData(1)
               this.$message.success(resp.data.message)
             })
@@ -243,7 +281,7 @@ export default {
     },
     handleDetail(id) {
 
-      axios.get(`/api/person/${id}`).then(resp=>{
+      axios.get(`/api/person/${id}`).then(resp => {
         this.person = resp.data.obj
         this.dialogTitle = '人物详情'
         this.isShowConfirm = false
@@ -254,14 +292,14 @@ export default {
       this.dialogTitle = '人物编辑'
       this.editInputName = true
       this.isShowConfirm = true
-      axios.get(`/api/person/${id}`).then(resp=>{
+      axios.get(`/api/person/${id}`).then(resp => {
         this.person = resp.data.obj
       })
       this.dialogFormVisible = true
     },
     handleDelete(person) {
       ElMessageBox.confirm(
-          '此操作将永久删除['+person.name+']这个人物，是否继续?',
+          '此操作将永久删除[' + person.name + ']这个人物，是否继续?',
           '提示',
           {
             confirmButtonText: '确定',
@@ -269,7 +307,7 @@ export default {
             type: 'warning',
           })
           .then(() => {
-            axios.delete(`/api/person/${person.id}`).then(resp=>{
+            axios.delete(`/api/person/${person.id}`).then(resp => {
               this.initData(1)
               this.$message.success(resp.data.message)
             })
@@ -283,43 +321,43 @@ export default {
     },
     handleDialogConfirm() {
       console.log(this.person)
-      if(this.dialogTitle === '添加人物'){
-        this.$refs.person.validate((valid)=>{
-          if(valid){
+      if (this.dialogTitle === '添加人物') {
+        this.$refs.person.validate((valid) => {
+          if (valid) {
             axios.post('/api/person/',
                 this.person
-            ).then(resp=>{
-              if(resp.data.code === 200){
+            ).then(resp => {
+              if (resp.data.code === 200) {
                 this.$message.success(resp.data.message)
-              }else {
+              } else {
                 this.$message.error(resp.data.message)
               }
               this.dialogFormVisible = false
               this.initData(1)
             })
-          }else {
+          } else {
             this.$message.error("有字段未填写，不能提交！")
           }
         })
       }
-      if(this.dialogTitle === '人物编辑'){
-/*        this.$refs.person.validate((valid)=>{
-          if(valid){*/
+      if (this.dialogTitle === '人物编辑') {
+        this.$refs.person.validate((valid) => {
+          if (valid) {
             axios.put('/api/person/',
                 this.person
-            ).then(resp=>{
-              if(resp.data.code === 200){
+            ).then(resp => {
+              if (resp.data.code === 200) {
                 this.$message.success(resp.data.message)
-              }else {
+              } else {
                 this.$message.error(resp.data.message)
               }
               this.dialogFormVisible = false
               this.initData(1)
             })
-     /*     }else {
+          } else {
             this.$message.error("有字段未填写，不能提交！")
           }
-        })*/
+        })
       }
     },
     handleDialogCancel() {
@@ -342,8 +380,8 @@ export default {
 
       })
     },
-    handleOpened(){
-      if (this.dialogTitle !== '添加人物'){
+    handleOpened() {
+      if (this.dialogTitle !== '添加人物') {
         this.$refs.person.validate()
       }
 
