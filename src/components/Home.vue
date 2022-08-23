@@ -53,10 +53,10 @@
                      v-model:current-page="pagination.curPage"
       />
 
-      <el-dialog @opened="handleOpened" v-model="dialogFormVisible" :title="dialogTitle" @close="handleDialogCancel">
+      <el-dialog v-model="dialogFormVisible" :title="dialogTitle" @close="handleDialogCancel">
         <el-form :disabled="!isShowConfirm" :model="person" :rules="rules" ref="person">
           <el-form-item prop="name" label="人物姓名:" :label-width="formLabelWidth">
-            <el-input :disabled="editInputName" v-model="person.name" placeholder="请输入人物姓名..."/>
+            <el-input :disabled="canEditName" v-model="person.name" placeholder="请输入人物姓名..."/>
           </el-form-item>
           <el-form-item prop="material" label="材质:" :label-width="formLabelWidth">
             <el-input v-model="person.material" placeholder="请输入人物玩偶材质..."/>
@@ -72,6 +72,7 @@
           </el-form-item>
           <el-form-item prop="nameImage" label="人物艺术字:" :label-width="formLabelWidth">
             <el-upload
+                :disabled="!canChangeImage"
                 class="avatar-uploader"
                 action="#"
                 :auto-upload="false"
@@ -85,6 +86,7 @@
           </el-form-item>
           <el-form-item prop="personImage" label="人物卡通图:" :label-width="formLabelWidth">
             <el-upload
+                :disabled="!canChangeImage"
                 class="avatar-uploader"
                 action="#"
                 :on-change="uploadPersonImage"
@@ -97,6 +99,7 @@
           </el-form-item>
           <el-form-item prop="dollImage" label="人物玩偶图片:" :label-width="formLabelWidth">
             <el-upload
+                :disabled="!canChangeImage"
                 class="avatar-uploader"
                 action="#"
                 :on-change="uploadDollImage"
@@ -109,6 +112,7 @@
           </el-form-item>
           <el-form-item prop="qrCode" label="二维码:" :label-width="formLabelWidth">
             <el-upload
+                :disabled="!canChangeImage"
                 class="avatar-uploader"
                 action="#"
                 :on-change="uploadQrCodeImage"
@@ -136,13 +140,15 @@
 
 import axios from "axios";
 import {ElMessage, ElMessageBox} from 'element-plus'
+import {nextTick} from "vue";
 
 
 export default {
   name: "Home",
   data() {
     return {
-      editInputName: false,
+      canChangeImage:true,
+      canEditName: false,
       isShowConfirm: true,
       selectedRows: [],
       dialogTitle: '',
@@ -242,7 +248,7 @@ export default {
     },
     showAdd() {
       this.isShowConfirm = true
-      this.editInputName = false
+      this.canEditName = false
       this.dialogTitle = '添加人物'
       this.dialogFormVisible = true
     },
@@ -285,12 +291,13 @@ export default {
         this.person = resp.data.obj
         this.dialogTitle = '人物详情'
         this.isShowConfirm = false
+        this.canChangeImage = false
         this.dialogFormVisible = true
       })
     },
     handleEdit(id) {
       this.dialogTitle = '人物编辑'
-      this.editInputName = true
+      this.canEditName = true
       this.isShowConfirm = true
       axios.get(`/api/person/${id}`).then(resp => {
         this.person = resp.data.obj
@@ -320,7 +327,6 @@ export default {
           })
     },
     handleDialogConfirm() {
-      console.log(this.person)
       if (this.dialogTitle === '添加人物') {
         this.$refs.person.validate((valid) => {
           if (valid) {
@@ -332,6 +338,7 @@ export default {
               } else {
                 this.$message.error(resp.data.message)
               }
+
               this.dialogFormVisible = false
               this.initData(1)
             })
@@ -341,8 +348,9 @@ export default {
         })
       }
       if (this.dialogTitle === '人物编辑') {
-        this.$refs.person.validate((valid) => {
-          if (valid) {
+        this.$refs.person.validate((valid,fields) => {
+          console.log(fields)
+          if (fields.name[0].field === 'name') {
             axios.put('/api/person/',
                 this.person
             ).then(resp => {
@@ -351,6 +359,7 @@ export default {
               } else {
                 this.$message.error(resp.data.message)
               }
+              this.$refs.person.resetFields()
               this.dialogFormVisible = false
               this.initData(1)
             })
@@ -361,10 +370,9 @@ export default {
       }
     },
     handleDialogCancel() {
+      this.$refs.person.resetFields()
       this.dialogFormVisible = false
-      this.person = {
-        material: 'PVC'
-      }
+      this.canChangeImage = true
     },
     initData(currentPage) {
       axios.get('/api/person/list', {
@@ -380,12 +388,6 @@ export default {
 
       })
     },
-    handleOpened() {
-      if (this.dialogTitle !== '添加人物') {
-        this.$refs.person.validate()
-      }
-
-    }
   },
   mounted() {
     this.initData(1)
