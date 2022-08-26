@@ -25,12 +25,14 @@
         <p class="info1">材质：{{ texture }}</p>
         <p class="info2">价格：{{ price }}元</p>
       </div>
+      <img class="qrCodeImageBox" :src="qrCodeImageBox"  alt="not found">
+
     </div>
   </div>
 </template>
 
 <script>
-
+import axios from "axios";
 import title from '../../assets/img/other/title_black.png'
 import restart from '../../assets/img/other/restart.png'
 
@@ -46,6 +48,7 @@ export default {
       person1: '',
       person2: '',
       nameImage:'',
+      qrCodeImageBox:'',
       restart,
       price: 69,
       name: '关羽',
@@ -56,18 +59,33 @@ export default {
     }
   },
   mounted() {
-    if (!sessionStorage.getItem("name")) {
-      this.$router.replace('/one')
-    }
+    // if (!sessionStorage.getItem("name")) {
+    //   this.$router.replace('/one')
+    // }
     this.person1 = guanyu1
     this.person2 = guanyu2
     this.nameImage = guanyu3
+
+    let name = '张飞'
+    axios.get(`/api/person/selectByName/${name}`).then(resp=>{
+      let person = resp.data.obj
+      this.person1 = person.personImage
+      this.person2 = person.dollImage
+      this.nameImage = person.nameImage
+      this.qrCodeImageBox = person.qrCode
+      this.titleText = person.titleText
+      this.introText1 = person.personInfoOne
+      this.introText2 = person.personInfoTwo
+      this.texture = person.material
+      this.price = person.price
+    })
   },
   methods:{
     doAgain(){
       this.$router.replace('/one')
     }
   }
+
 }
 </script>
 
@@ -176,6 +194,15 @@ export default {
   height: 11.5%;
   right: 21%;
   bottom: 8%;
+  position: absolute;
+  /*background: #213547;*/
+}
+
+.qrCodeImageBox{
+  width: 10%;
+  height: 5%;
+  right: 11%;
+  bottom: 14%;
   position: absolute;
   /*background: #213547;*/
 }

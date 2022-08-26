@@ -64,6 +64,9 @@
           <el-form-item prop="price" label="价格:" :label-width="formLabelWidth">
             <el-input v-model="person.price" placeholder="请输入人物玩偶价格..."/>
           </el-form-item>
+          <el-form-item prop="titleText" label="人物简介标题:" :label-width="formLabelWidth">
+            <el-input v-model="person.titleText" placeholder="请输入人物简介标题..."/>
+          </el-form-item>
           <el-form-item prop="personInfoOne" label="第一段人物简介:" :label-width="formLabelWidth">
             <el-input v-model="person.personInfoOne" placeholder="请输入第一段人物简介..."/>
           </el-form-item>
@@ -158,6 +161,7 @@ export default {
         name: '',
         nameImage: '',
         personImage: '',
+        titleText:'',
         personInfoOne: '',
         personInfoTwo: '',
         dollImage: '',
@@ -176,6 +180,7 @@ export default {
         }],
         nameImage: [{required: true, message: '人物艺术字图片未上传', trigger: 'blur'}],
         personImage: [{required: true, message: '人物卡通图片未上传', trigger: 'blur'}],
+        titleText: [{required: true, message: '人物简介标题不能为空', trigger: 'blur'}],
         personInfoOne: [{required: true, message: '第一段人物简介不能为空', trigger: 'blur'}],
         personInfoTwo: [{required: true, message: '第二段人物简介不能为空', trigger: 'blur'}],
         dollImage: [{required: true, message: '人物玩偶图片为上传', trigger: 'blur'}],
