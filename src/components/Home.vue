@@ -58,6 +58,12 @@
           <el-form-item prop="name" label="人物姓名:" :label-width="formLabelWidth">
             <el-input :disabled="canEditName" v-model="person.name" placeholder="请输入人物姓名..."/>
           </el-form-item>
+          <el-form-item prop="sex" label="人物性别:" :label-width="formLabelWidth">
+            <el-radio-group v-model="person.sex" class="ml-4">
+              <el-radio label="男" size="large">男</el-radio>
+              <el-radio label="女" size="large">女</el-radio>
+            </el-radio-group>
+          </el-form-item>
           <el-form-item prop="material" label="材质:" :label-width="formLabelWidth">
             <el-input v-model="person.material" placeholder="请输入人物玩偶材质..."/>
           </el-form-item>
@@ -143,8 +149,6 @@
 
 import axios from "axios";
 import {ElMessage, ElMessageBox} from 'element-plus'
-import {nextTick} from "vue";
-
 
 export default {
   name: "Home",
@@ -159,6 +163,7 @@ export default {
       dialogFormVisible: false,
       person: {
         name: '',
+        sex:'',
         nameImage: '',
         personImage: '',
         titleText:'',
@@ -178,6 +183,7 @@ export default {
           message: '该人物已存在，不可添加',
           trigger: 'blur'
         }],
+        sex: [{required: true, message: '请选择人物性别', trigger: 'blur'}],
         nameImage: [{required: true, message: '人物艺术字图片未上传', trigger: 'blur'}],
         personImage: [{required: true, message: '人物卡通图片未上传', trigger: 'blur'}],
         titleText: [{required: true, message: '人物简介标题不能为空', trigger: 'blur'}],
@@ -332,6 +338,7 @@ export default {
           })
     },
     handleDialogConfirm() {
+      console.log(this.person)
       if (this.dialogTitle === '添加人物') {
         this.$refs.person.validate((valid) => {
           if (valid) {
@@ -343,7 +350,7 @@ export default {
               } else {
                 this.$message.error(resp.data.message)
               }
-
+              this.$refs.person.resetFields()
               this.dialogFormVisible = false
               this.initData(1)
             })

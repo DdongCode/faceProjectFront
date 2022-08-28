@@ -36,10 +36,6 @@ import axios from "axios";
 import title from '../../assets/img/other/title_black.png'
 import restart from '../../assets/img/other/restart.png'
 
-import guanyu1 from '../../assets/img/person/guanyu1.png'
-import guanyu2 from '../../assets/img/person/guanyu2.png'
-import guanyu3 from '../../assets/img/person/guanyu3.png'
-
 export default {
   name: "two",
   data() {
@@ -59,14 +55,10 @@ export default {
     }
   },
   mounted() {
-    // if (!sessionStorage.getItem("name")) {
-    //   this.$router.replace('/one')
-    // }
-    this.person1 = guanyu1
-    this.person2 = guanyu2
-    this.nameImage = guanyu3
-
-    let name = '张飞'
+    if (!sessionStorage.getItem("name")) {
+      this.$router.replace('/one')
+    }
+    let name = sessionStorage.getItem("name")
     axios.get(`/api/person/selectByName/${name}`).then(resp=>{
       let person = resp.data.obj
       this.person1 = person.personImage
@@ -78,6 +70,7 @@ export default {
       this.introText2 = person.personInfoTwo
       this.texture = person.material
       this.price = person.price
+      this.name = name
     })
   },
   methods:{
